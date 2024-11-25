@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 public class sudoku_generator{
     private final int SIZE = 9;
@@ -8,29 +7,7 @@ public class sudoku_generator{
     public sudoku_generator(){
         panel = new int[9][9];
     }
-    public int[][] completed_sudoku(){
-        ArrayList<Integer> num = new ArrayList<>();
-        for (int i = 1 ; i <= 9 ;i++){
-            num.add(i);
-        }
-        for (int i = 0; i < SIZE; i++){
-            for (int key = 1 ; key < 9 ;key++){
-                num.add(key);
-            }
-            for (int j = 0; j < SIZE; j++){
-                while (true){
-                    Collections.shuffle(num);
-                    int rand = num.get(0);
-                    if (isValid(i, j, rand)){
-                        panel[i][j] = rand;
-                        num.remove(rand);
-                        break;
-                    }
-                }
-            }
-        }
-        return panel;
-    }
+
     private boolean isValid(int x, int y, int k){
         for (int i = 0; i < SIZE; i++){
             if (panel[x][i] == k) return false;
@@ -45,6 +22,37 @@ public class sudoku_generator{
             }
         }
         return true;
+    }
+    
+    private boolean fillGrid() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (panel[i][j] == BLANK) {
+                    ArrayList<Integer> numbers = new ArrayList<>();
+                    for (int num = 1; num <= SIZE; num++) {
+                        numbers.add(num);
+                    }
+                    Collections.shuffle(numbers);
+                    
+                    for (int num : numbers) {
+                        if (isValid(i, j, num)) {
+                            panel[i][j] = num;
+                            if (fillGrid()) {
+                                return true;
+                            }
+                            panel[i][j] = BLANK;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public int[][] completedSudoku() {
+        fillGrid();
+        return panel;
     }
 
     public void print(){
