@@ -1,9 +1,9 @@
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 public class sudoku_generator{
     private final int SIZE = 9;
     private final int BLANK = 0;
     private int[][] panel;
+    public int[][] player_panel;
     public sudoku_generator(){
         panel = new int[9][9];
     }
@@ -23,7 +23,7 @@ public class sudoku_generator{
         }
         return true;
     }
-    
+
     private boolean fillGrid() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -50,15 +50,42 @@ public class sudoku_generator{
         return true;
     }
 
-    public int[][] completedSudoku() {
+    private int[][] completedSudoku() {
         fillGrid();
         return panel;
     }
 
-    public void print(){
+    public int[][] genPlayerGrid(){
+        player_panel = completedSudoku();
+        for (int sub_grid_col = 0; sub_grid_col < Math.sqrt(SIZE); sub_grid_col++){
+            for (int sub_grid_row = 0; sub_grid_row < Math.sqrt(SIZE); sub_grid_row++){
+                int rand = 3 + (int)(Math.random()*(8-3)+1);
+                Random tmp = new Random();
+                for (int i = sub_grid_col*3; i < sub_grid_col*3+3; i++){
+                    for (int j = sub_grid_row*3; j < sub_grid_row*3+3; j++){
+                        if ((int)(tmp.nextInt(2)) == 0 && rand >0){
+                            rand--;
+                            player_panel[i][j] = BLANK;
+                        };
+                    }
+                }
+            }
+        }
+        return player_panel;
+    }
+
+    private void printCompletedGrid(){
         for (int i = 0; i < SIZE; i++){
             for (int j = 0; j < SIZE; j++){
                 System.out.print(panel[i][j] + " ");;
+            }
+            System.out.println();
+        }
+    }
+    public void printPlayerGrid(){
+        for (int i = 0; i < SIZE; i++){
+            for (int j = 0; j < SIZE; j++){
+                System.out.print(player_panel[i][j] + " ");;
             }
             System.out.println();
         }
